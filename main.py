@@ -144,11 +144,16 @@ for private_key in keys_list:
     holograph_contract = web3.eth.contract(address=HolographBridgeAddress, abi=fun.holo_abi)
     lzEndpoint_contract = web3.eth.contract(address=LzEndAddress, abi=fun.lzEndpoint_abi)
 
-    nft_id = ntf.functions.tokensOfOwner(wallet).call()[0]
-    payload = web3.to_hex(encode(['address', 'address', 'uint256'], [wallet, wallet, nft_id]))
-    to_gas_price = fun.address[to_network]['holograph_gas']
-    to_gas_limit = random.randint(450000, 500000)    
-
+    try:
+        nft_id = ntf.functions.tokensOfOwner(wallet).call()[0]
+        payload = web3.to_hex(encode(['address', 'address', 'uint256'], [wallet, wallet, nft_id]))
+        to_gas_price = fun.address[to_network]['holograph_gas']
+        to_gas_limit = random.randint(450000, 500000)    
+    except Exception as error:
+        error_str = str(error)
+        fun.log_error(f'building_bridge false: {error}')
+        save_wallet_to("building_bridge_error", private_key)   
+        continue   
     
 
     lzFee = lzEndpoint_contract.functions.estimateFees(fun.address[to_network]['dstChainId'],HolographBridgeAddress,'0x',False,'0x').call()[0]
@@ -160,6 +165,7 @@ for private_key in keys_list:
         fun.log_error(f'Не достаточно нативки для оплаты газа')
         save_wallet_to("building_bridge_no_money", private_key)
         continue 
+
 
     trying = 0 
     while True:
