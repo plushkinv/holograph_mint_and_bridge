@@ -64,7 +64,7 @@ for private_key in keys_list:
     web3 = Web3(Web3.HTTPProvider(fun.address[network]['rpc'], request_kwargs=config.request_kwargs))
    
     dapp_abi = json.load(open('abi/nft_abi.json'))
-    dapp_address = web3.to_checksum_address("0x8c531f965c05fab8135d951e2ad0ad75cf3405a2")
+    dapp_address = web3.to_checksum_address(config.NFT_adress)
     dapp_contract = web3.eth.contract(address=dapp_address, abi=dapp_abi)
 
     try:
@@ -119,7 +119,7 @@ for private_key in keys_list:
 
     HolographBridgeAddress = Web3.to_checksum_address('0xD85b5E176A30EdD1915D6728FaeBD25669b60d8b')
     LzEndAddress = Web3.to_checksum_address('0x3c2269811836af69497E5F486A85D7316753cf62')
-    nftAddress = Web3.to_checksum_address('0x8c531f965c05fab8135d951e2ad0ad75cf3405a2')    
+    nftAddress = Web3.to_checksum_address(config.NFT_adress)    
     
     networks = ['avax', 'polygon', 'bsc']
     random.shuffle(networks)

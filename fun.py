@@ -31,7 +31,9 @@ address = {
         'ETH': 'native',
         'native': 'ETH',
         'WETH': '0x82af49447d8a07e3bd95bd0d56f35241523fbab1',
-
+        'dstChainId': 110,
+        'holograph_id': 6,
+        'holograph_gas': 131250001,
     },
     'optimism': {
         'type': 0,
@@ -40,7 +42,9 @@ address = {
         'ETH': 'native',
         'native': 'ETH',
         'WETH': '0x4200000000000000000000000000000000000006',
-
+        'dstChainId': 111,
+        'holograph_id': 7,
+        'holograph_gas': 10000001,
     },
     'bsc': {
         'type': 0,

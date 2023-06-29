@@ -1,23 +1,27 @@
 
 #то что ниже обязательно заполнить своими данными
 proxy_use = 0 #  0 - не использовать, 1 - прокси без ссылки , 2 - прокси со ссылкой для смены ip
-proxy_login = 'pf64'
-proxy_password = '9c3aa07'
-proxy_address = 'noom'
+proxy_login = 'pfds464'
+proxy_password = '9c3a07'
+proxy_address = 'no.com'
 proxy_port = '157'
-proxy_changeIPlink = "http://n9fe5cce3b204"
+proxy_changeIPlink = "http:/5cce3b204"
 
 
 #то что ниже желательно настроить под себя
-count_nfts = 1
+NFT_adress = "0x6d6768a0b24299bede0492a4571d79f535c330d8"
+count_nfts = 1  # количество сколько хотите сминтить
+network4mint = ['avax', 'polygon', 'bsc', 'arbitrum', 'optimism']  # выберите сети, в одной из них будет случайно сминчена НФТ
+network4bridge = ['avax', 'polygon', 'bsc', 'arbitrum', 'optimism']  # выберите сети, в одну из них будет будет отправлена НФТ через мост
+
 
 #укажите паузу в работе между кошельками, минимальную и максимальную. 
 #При смене каждого кошелька будет выбрано случайное число. Значения указываются в секундах
-timeoutMin = 1 #минимальная 
-timeoutMax = 3 #максимальная
+timeoutMin = 10 #минимальная 
+timeoutMax = 30 #максимальная
 #задержки между операциями в рамках одного кошелька
-timeoutTehMin = 1 #минимальная 
-timeoutTehMax = 3 #максимальная
+timeoutTehMin = 3 #минимальная 
+timeoutTehMax = 10 #максимальная
 
 
 
@@ -42,4 +46,5 @@ prices = {
     "MATIC": 0.645,
     "AVAX": 11.8,
     "BNB": 246,
+    "ETH": 1900,
 }

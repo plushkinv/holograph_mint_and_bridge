@@ -46,7 +46,7 @@ for private_key in keys_list:
     log(f"I-{i}: Начинаю работу с {wallet}")
     
     flag_no_money = 1
-    networks = ['avax', 'polygon', 'bsc']
+    networks = config.network4mint
     random.shuffle(networks)
     for network in networks:
         if fun.get_token_balance_USD(wallet, network, fun.address[network]['native']) >= 0.1*config.count_nfts:
@@ -63,7 +63,7 @@ for private_key in keys_list:
     web3 = Web3(Web3.HTTPProvider(fun.address[network]['rpc'], request_kwargs=config.request_kwargs))
    
     dapp_abi = json.load(open('abi/nft_abi.json'))
-    dapp_address = web3.to_checksum_address("0x8c531f965c05fab8135d951e2ad0ad75cf3405a2")
+    dapp_address = web3.to_checksum_address(config.NFT_adress)
     dapp_contract = web3.eth.contract(address=dapp_address, abi=dapp_abi)
 
     try:

@@ -28,7 +28,7 @@ random.shuffle(keys_list)
 i=0
 for private_key in keys_list:
     i += 1
-    if config.proxy_use:
+    if config.proxy_use == 2:
         while True:
             try:
                 requests.get(url=config.proxy_changeIPlink)
@@ -46,10 +46,10 @@ for private_key in keys_list:
 
     HolographBridgeAddress = Web3.to_checksum_address('0xD85b5E176A30EdD1915D6728FaeBD25669b60d8b')
     LzEndAddress = Web3.to_checksum_address('0x3c2269811836af69497E5F486A85D7316753cf62')
-    nftAddress = Web3.to_checksum_address('0x8c531f965c05fab8135d951e2ad0ad75cf3405a2')    
+    nftAddress = Web3.to_checksum_address(config.NFT_adress)    
     log(f"I-{i}: Начинаю работу с {wallet}")
     
-    networks = ['avax', 'polygon', 'bsc']
+    networks = config.network4mint
     random.shuffle(networks)
     balance = 0
     for network in networks:
@@ -65,6 +65,7 @@ for private_key in keys_list:
         save_wallet_to("building_not_have", private_key)
         continue
     
+    networks = config.network4bridge
     networks.remove(network)
     to_network=random.choice(networks)
     log(f'Хочу отправить в {to_network}')
