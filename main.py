@@ -39,35 +39,35 @@ for private_key in keys_list:
             except Exception as error:
                 print(' !!! Не смог подключиться через Proxy, повторяем через 2 минуты... ! Чтобы остановить программу нажмите CTRL+C или закройте терминал')
                 time.sleep(120)
-
-    web3 = Web3(Web3.HTTPProvider(fun.address['polygon']['rpc'], request_kwargs=config.request_kwargs))
-    account = web3.eth.account.from_key(private_key)
-    wallet = account.address
-
-    log(f"I-{i}: Начинаю работу с {wallet}")
-    
-    flag_no_money = 1
-    networks = ['avax', 'polygon', 'bsc']
-    random.shuffle(networks)
-    for network in networks:
-        if fun.get_token_balance_USD(wallet, network, fun.address[network]['native']) >= 0.1*config.count_nfts:
-            flag_no_money = 0
-            break
-    
-    if flag_no_money == 1:
-        log_error("Не достаточно нативнки на кошельке чтобы сминтить")
-        save_wallet_to("building_no_money", private_key)
-        continue
-
-    log(f"выбрана сеть для минта {network}")
-    
-    web3 = Web3(Web3.HTTPProvider(fun.address[network]['rpc'], request_kwargs=config.request_kwargs))
-   
-    dapp_abi = json.load(open('abi/nft_abi.json'))
-    dapp_address = web3.to_checksum_address(config.NFT_adress)
-    dapp_contract = web3.eth.contract(address=dapp_address, abi=dapp_abi)
-
     try:
+        web3 = Web3(Web3.HTTPProvider(fun.address['polygon']['rpc'], request_kwargs=config.request_kwargs))
+        account = web3.eth.account.from_key(private_key)
+        wallet = account.address
+
+        log(f"I-{i}: Начинаю работу с {wallet}")
+        
+        flag_no_money = 1
+        networks = config.network4mint
+        random.shuffle(networks)
+        for network in networks:
+            if fun.get_token_balance_USD(wallet, network, fun.address[network]['native']) >= 0.1*config.count_nfts:
+                flag_no_money = 0
+                break
+        
+        if flag_no_money == 1:
+            log_error("Не достаточно нативнки на кошельке чтобы сминтить")
+            save_wallet_to("no_money", private_key)
+            continue
+
+        log(f"выбрана сеть для минта {network}")
+        
+        web3 = Web3(Web3.HTTPProvider(fun.address[network]['rpc'], request_kwargs=config.request_kwargs))
+       
+        dapp_abi = json.load(open('abi/nft_abi.json'))
+        dapp_address = web3.to_checksum_address(config.NFT_adress)
+        dapp_contract = web3.eth.contract(address=dapp_address, abi=dapp_abi)
+
+
 
         if fun.address[network]['type']:
             maxPriorityFeePerGas = web3.eth.max_priority_fee
@@ -103,12 +103,12 @@ for private_key in keys_list:
             log_ok(f'mint OK: {tx_hash}')
         else:
             log_error(f' mint false: {tx_hash}')
-            save_wallet_to("building_mint_error", private_key)
+            save_wallet_to("mint_error", private_key)
             continue
                 
     except Exception as error:
         log_error(f' mint false: {error}')
-        save_wallet_to("building_mint_error", private_key)
+        save_wallet_to("mint_error", private_key)
         continue
     
 
@@ -116,56 +116,59 @@ for private_key in keys_list:
     fun.timeOut("teh")
 
 ###########
-
-    HolographBridgeAddress = Web3.to_checksum_address('0xD85b5E176A30EdD1915D6728FaeBD25669b60d8b')
-    LzEndAddress = Web3.to_checksum_address('0x3c2269811836af69497E5F486A85D7316753cf62')
-    nftAddress = Web3.to_checksum_address(config.NFT_adress)    
-    
-    networks = ['avax', 'polygon', 'bsc']
-    random.shuffle(networks)
-    balance = 0
-    for network in networks:
-        web3 = Web3(Web3.HTTPProvider(fun.address[network]['rpc'], request_kwargs=config.request_kwargs))
-        ntf = web3.eth.contract(address=nftAddress, abi=dapp_abi)
-        balance = ntf.functions.balanceOf(wallet).call()
-        if balance >= 1:
-            log(f'Нашел Building в количестве {balance} в сети {network}')
-            break
-
-    if balance == 0:
-        log (f'Не нашел НФТ в этом кошельке')
-        save_wallet_to("building_not_have", private_key)
-        continue
-    
-    networks.remove(network)
-    to_network=random.choice(networks)
-    log(f'Хочу отправить в {to_network}')
-
-    holograph_contract = web3.eth.contract(address=HolographBridgeAddress, abi=fun.holo_abi)
-    lzEndpoint_contract = web3.eth.contract(address=LzEndAddress, abi=fun.lzEndpoint_abi)
-
     try:
+        HolographBridgeAddress = Web3.to_checksum_address('0xD85b5E176A30EdD1915D6728FaeBD25669b60d8b')
+        LzEndAddress = Web3.to_checksum_address('0x3c2269811836af69497E5F486A85D7316753cf62')
+        nftAddress = Web3.to_checksum_address(config.NFT_adress)    
+        
+        networks = config.network4mint
+        random.shuffle(networks)
+        balance = 0
+        for network in networks:
+            web3 = Web3(Web3.HTTPProvider(fun.address[network]['rpc'], request_kwargs=config.request_kwargs))
+            ntf = web3.eth.contract(address=nftAddress, abi=dapp_abi)
+            balance = ntf.functions.balanceOf(wallet).call()
+            if balance >= 1:
+                log(f'Нашел NFT в количестве {balance} в сети {network}')
+                break
+
+        if balance == 0:
+            log (f'Не нашел НФТ в этом кошельке')
+            save_wallet_to("NFT_not_have", private_key)
+            continue
+        
+        networks = config.network4bridge
+        if network in networks:
+            networks.remove(network)
+        to_network=random.choice(networks)
+        log(f'Хочу отправить в {to_network}')
+
+        holograph_contract = web3.eth.contract(address=HolographBridgeAddress, abi=fun.holo_abi)
+        lzEndpoint_contract = web3.eth.contract(address=LzEndAddress, abi=fun.lzEndpoint_abi)
+
+
         nft_id = ntf.functions.tokensOfOwner(wallet).call()[0]
         payload = web3.to_hex(encode(['address', 'address', 'uint256'], [wallet, wallet, nft_id]))
         to_gas_price = fun.address[to_network]['holograph_gas']
         to_gas_limit = random.randint(450000, 500000)    
-    except Exception as error:
-        error_str = str(error)
-        fun.log_error(f'building_bridge false: {error}')
-        save_wallet_to("building_bridge_error", private_key)   
-        continue   
+ 
     
 
-    lzFee = lzEndpoint_contract.functions.estimateFees(fun.address[to_network]['dstChainId'],HolographBridgeAddress,'0x',False,'0x').call()[0]
-    lzFee = int(lzFee * 2.5)    
+        lzFee = lzEndpoint_contract.functions.estimateFees(fun.address[to_network]['dstChainId'],HolographBridgeAddress,'0x',False,'0x').call()[0]
+        lzFee = int(lzFee * 2.5)    
 
-    balance = 0
-    balance = web3.eth.get_balance(wallet)
-    if balance < lzFee * 1.1:
-        fun.log_error(f'Не достаточно нативки для оплаты газа')
-        save_wallet_to("building_bridge_no_money", private_key)
-        continue 
-
+        balance = 0
+        balance = web3.eth.get_balance(wallet)
+        if balance < lzFee * 1.1:
+            fun.log_error(f'Не достаточно нативки для оплаты газа')
+            save_wallet_to("NFT_bridge_no_money", private_key)
+            continue 
+            
+    except Exception as error:
+        error_str = str(error)
+        fun.log_error(f'NFT bridge false: {error}')
+        save_wallet_to("NFT_bridge_error", private_key)   
+        continue  
 
     trying = 0 
     while True:
@@ -210,18 +213,18 @@ for private_key in keys_list:
             tx_result = web3.eth.wait_for_transaction_receipt(tx_hash)
 
             if tx_result['status'] == 1:
-                fun.log_ok(f'building_bridge OK: {tx_hash}')
+                fun.log_ok(f'NFT _bridge OK: {tx_hash}')
                 break
             else:
-                fun.log_error(f'building_bridge false: {tx_hash}')
+                fun.log_error(f'NFT bridge false: {tx_hash}')
 
         except Exception as error:
             error_str = str(error)
-            fun.log_error(f'building_bridge false: {error}')
+            fun.log_error(f'NFT bridge false: {error}')
 
         if trying > 3 :
-            fun.log_error("Ниче не получается! ищи этот кошелек в логах building_bridge_error")
-            save_wallet_to("building_bridge_error", private_key)   
+            fun.log_error("Ниче не получается! ищи этот кошелек в логах NFT_bridge_error")
+            save_wallet_to("NFT_bridge_error", private_key)   
             break            
 
 

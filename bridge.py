@@ -57,16 +57,17 @@ for private_key in keys_list:
         ntf = web3.eth.contract(address=nftAddress, abi=dapp_abi)
         balance = ntf.functions.balanceOf(wallet).call()
         if balance >= 1:
-            log(f'Нашел Building в количестве {balance} в сети {network}')
+            log(f'Нашел NFT в количестве {balance} в сети {network}')
             break
 
     if balance == 0:
         log (f'Не нашел НФТ в этом кошельке')
-        save_wallet_to("building_not_have", private_key)
+        save_wallet_to("NFT_not_have", private_key)
         continue
     
     networks = config.network4bridge
-    networks.remove(network)
+    if network in networks:
+        networks.remove(network)
     to_network=random.choice(networks)
     log(f'Хочу отправить в {to_network}')
 
@@ -93,7 +94,7 @@ for private_key in keys_list:
     balance = web3.eth.get_balance(wallet)
     if balance < lzFee * 1.1:
         fun.log_error(f'Не достаточно нативки для оплаты газа')
-        save_wallet_to("building_bridge_no_money", private_key)
+        save_wallet_to("no_money", private_key)
         continue 
 
     trying = 0 
@@ -139,18 +140,18 @@ for private_key in keys_list:
             tx_result = web3.eth.wait_for_transaction_receipt(tx_hash)
 
             if tx_result['status'] == 1:
-                fun.log_ok(f'building_bridge OK: {tx_hash}')
+                fun.log_ok(f'NFT bridge OK: {tx_hash}')
                 break
             else:
-                fun.log_error(f'building_bridge false: {tx_hash}')
+                fun.log_error(f'NFT bridge false: {tx_hash}')
 
         except Exception as error:
             error_str = str(error)
-            fun.log_error(f'building_bridge false: {error}')
+            fun.log_error(f'NFT bridge false: {error}')
 
         if trying > 3 :
-            fun.log_error("Ниче не получается! ищи этот кошелек в логах building_bridge_error")
-            save_wallet_to("building_bridge_error", private_key)   
+            fun.log_error("Ниче не получается! ищи этот кошелек в логах NFT_bridge_error")
+            save_wallet_to("NFT_bridge_error", private_key)   
             break            
 
 
