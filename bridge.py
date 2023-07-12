@@ -40,45 +40,50 @@ for private_key in keys_list:
                 print(' !!! Не смог подключиться через Proxy, повторяем через 2 минуты... ! Чтобы остановить программу нажмите CTRL+C или закройте терминал')
                 time.sleep(120)
 
-    web3 = Web3(Web3.HTTPProvider(fun.address['polygon']['rpc'], request_kwargs=config.request_kwargs))
-    account = web3.eth.account.from_key(private_key)
-    wallet = account.address
-
-    HolographBridgeAddress = Web3.to_checksum_address('0xD85b5E176A30EdD1915D6728FaeBD25669b60d8b')
-    LzEndAddress = Web3.to_checksum_address('0x3c2269811836af69497E5F486A85D7316753cf62')
-    nftAddress = Web3.to_checksum_address(config.NFT_adress)    
-    log(f"I-{i}: Начинаю работу с {wallet}")
-    
-    networks = config.network4mint
-    random.shuffle(networks)
-    balance = 0
-    for network in networks:
-        web3 = Web3(Web3.HTTPProvider(fun.address[network]['rpc'], request_kwargs=config.request_kwargs))
-        ntf = web3.eth.contract(address=nftAddress, abi=dapp_abi)
-        balance = ntf.functions.balanceOf(wallet).call()
-        if balance >= 1:
-            log(f'Нашел NFT в количестве {balance} в сети {network}')
-            break
-
-    if balance == 0:
-        log (f'Не нашел НФТ в этом кошельке')
-        save_wallet_to("NFT_not_have", private_key)
-        continue
-    
-    networks = config.network4bridge
-    if network in networks:
-        networks.remove(network)
-    to_network=random.choice(networks)
-    log(f'Хочу отправить в {to_network}')
-
-    holograph_contract = web3.eth.contract(address=HolographBridgeAddress, abi=fun.holo_abi)
-    lzEndpoint_contract = web3.eth.contract(address=LzEndAddress, abi=fun.lzEndpoint_abi)
-
     try:
+        web3 = Web3(Web3.HTTPProvider(fun.address['polygon']['rpc'], request_kwargs=config.request_kwargs))
+        account = web3.eth.account.from_key(private_key)
+        wallet = account.address
+
+        HolographBridgeAddress = Web3.to_checksum_address('0xD85b5E176A30EdD1915D6728FaeBD25669b60d8b')
+        LzEndAddress = Web3.to_checksum_address('0x3c2269811836af69497E5F486A85D7316753cf62')
+        nftAddress = Web3.to_checksum_address(config.NFT_adress)    
+        log(f"I-{i}: Начинаю работу с {wallet}")
+        
+        networks = config.network4mint
+        random.shuffle(networks)
+        balance = 0
+        for network in networks:
+            web3 = Web3(Web3.HTTPProvider(fun.address[network]['rpc'], request_kwargs=config.request_kwargs))
+            ntf = web3.eth.contract(address=nftAddress, abi=dapp_abi)
+            balance = ntf.functions.balanceOf(wallet).call()
+            if balance >= 1:
+                log(f'Нашел NFT в количестве {balance} в сети {network}')
+                break
+
+        if balance == 0:
+            log (f'Не нашел НФТ в этом кошельке')
+            save_wallet_to("NFT_not_have", private_key)
+            continue
+        
+        networks = config.network4bridge
+        if network in networks:
+            networks.remove(network)
+        to_network=random.choice(networks)
+        log(f'Хочу отправить в {to_network}')
+
+        holograph_contract = web3.eth.contract(address=HolographBridgeAddress, abi=fun.holo_abi)
+        lzEndpoint_contract = web3.eth.contract(address=LzEndAddress, abi=fun.lzEndpoint_abi)
+
+    
         nft_id = ntf.functions.tokensOfOwner(wallet).call()[0]
         payload = web3.to_hex(encode(['address', 'address', 'uint256'], [wallet, wallet, nft_id]))
         to_gas_price = fun.address[to_network]['holograph_gas']
-        to_gas_limit = random.randint(450000, 500000)    
+        to_gas_limit = random.randint(450000, 500000)   
+
+        lzFee = lzEndpoint_contract.functions.estimateFees(fun.address[to_network]['dstChainId'],HolographBridgeAddress,'0x',False,'0x').call()[0]
+        lzFee = int(lzFee * 2.5)           
+         
     except Exception as error:
         error_str = str(error)
         fun.log_error(f'building_bridge false: {error}')
@@ -87,14 +92,14 @@ for private_key in keys_list:
 
     
 
-    lzFee = lzEndpoint_contract.functions.estimateFees(fun.address[to_network]['dstChainId'],HolographBridgeAddress,'0x',False,'0x').call()[0]
-    lzFee = int(lzFee * 2.5)    
+ 
 
     balance = 0
     balance = web3.eth.get_balance(wallet)
     if balance < lzFee * 1.1:
         fun.log_error(f'Не достаточно нативки для оплаты газа')
         save_wallet_to("no_money", private_key)
+        save_wallet_to("no_money_aw", wallet)
         continue 
 
     trying = 0 

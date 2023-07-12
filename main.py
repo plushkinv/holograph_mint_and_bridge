@@ -57,6 +57,7 @@ for private_key in keys_list:
         if flag_no_money == 1:
             log_error("Не достаточно нативнки на кошельке чтобы сминтить")
             save_wallet_to("no_money", private_key)
+            save_wallet_to("no_money_aw", wallet)
             continue
 
         log(f"выбрана сеть для минта {network}")
@@ -162,6 +163,7 @@ for private_key in keys_list:
         if balance < lzFee * 1.1:
             fun.log_error(f'Не достаточно нативки для оплаты газа')
             save_wallet_to("NFT_bridge_no_money", private_key)
+            save_wallet_to("NFT_bridge_no_money_aw", wallet)
             continue 
             
     except Exception as error:

@@ -39,34 +39,37 @@ for private_key in keys_list:
                 print(' !!! Не смог подключиться через Proxy, повторяем через 2 минуты... ! Чтобы остановить программу нажмите CTRL+C или закройте терминал')
                 time.sleep(120)
 
-    web3 = Web3(Web3.HTTPProvider(fun.address['polygon']['rpc'], request_kwargs=config.request_kwargs))
-    account = web3.eth.account.from_key(private_key)
-    wallet = account.address
-
-    log(f"I-{i}: Начинаю работу с {wallet}")
-    
-    flag_no_money = 1
-    networks = config.network4mint
-    random.shuffle(networks)
-    for network in networks:
-        if fun.get_token_balance_USD(wallet, network, fun.address[network]['native']) >= 0.1*config.count_nfts:
-            flag_no_money = 0
-            break
-    
-    if flag_no_money == 1:
-        log_error("Не достаточно нативнки на кошельке чтобы сминтить")
-        save_wallet_to("building_no_money", private_key)
-        continue
-
-    log(f"выбрана сеть для минта {network}")
-    
-    web3 = Web3(Web3.HTTPProvider(fun.address[network]['rpc'], request_kwargs=config.request_kwargs))
-   
-    dapp_abi = json.load(open('abi/nft_abi.json'))
-    dapp_address = web3.to_checksum_address(config.NFT_adress)
-    dapp_contract = web3.eth.contract(address=dapp_address, abi=dapp_abi)
-
     try:
+
+        web3 = Web3(Web3.HTTPProvider(fun.address['polygon']['rpc'], request_kwargs=config.request_kwargs))
+        account = web3.eth.account.from_key(private_key)
+        wallet = account.address
+
+        log(f"I-{i}: Начинаю работу с {wallet}")
+        
+        flag_no_money = 1
+        networks = config.network4mint
+        random.shuffle(networks)
+        for network in networks:
+            if fun.get_token_balance_USD(wallet, network, fun.address[network]['native']) >= 0.1*config.count_nfts:
+                flag_no_money = 0
+                break
+        
+        if flag_no_money == 1:
+            log_error("Не достаточно нативнки на кошельке чтобы сминтить")
+            save_wallet_to("no_money", private_key)
+            save_wallet_to("no_money_aw", wallet)
+            continue
+
+        log(f"выбрана сеть для минта {network}")
+        
+        web3 = Web3(Web3.HTTPProvider(fun.address[network]['rpc'], request_kwargs=config.request_kwargs))
+    
+        dapp_abi = json.load(open('abi/nft_abi.json'))
+        dapp_address = web3.to_checksum_address(config.NFT_adress)
+        dapp_contract = web3.eth.contract(address=dapp_address, abi=dapp_abi)
+
+        
 
         if fun.address[network]['type']:
             maxPriorityFeePerGas = web3.eth.max_priority_fee
@@ -102,12 +105,12 @@ for private_key in keys_list:
             log_ok(f'mint OK: {tx_hash}')
         else:
             log_error(f' mint false: {tx_hash}')
-            save_wallet_to("building_mint_error", private_key)
+            save_wallet_to("mint_error", private_key)
             continue
                 
     except Exception as error:
         log_error(f' mint false: {error}')
-        save_wallet_to("building_mint_error", private_key)
+        save_wallet_to("mint_error", private_key)
         continue
     
 
