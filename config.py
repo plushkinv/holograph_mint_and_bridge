@@ -9,7 +9,7 @@ proxy_changeIPlink = "http:/5cce3b204"
 
 
 #то что ниже желательно настроить под себя
-NFT_adress = "0xb6432d111bc2a022048b9aea7c11b2d627184bdd"
+NFT_adress = "0xe5325804d68033edf65a86403b2592a99e1f06de"
 count_nfts = 1  # количество сколько хотите сминтить
 network4mint = ['avax', 'polygon', 'bsc', 'arbitrum', 'optimism']  # выберите сети, в одной из них будет случайно сминчена НФТ
 network4bridge = ['avax', 'polygon', 'bsc', 'arbitrum', 'optimism']  # выберите сети, в одну из них будет будет отправлена НФТ через мост
