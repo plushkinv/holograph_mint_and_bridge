@@ -138,7 +138,7 @@ for private_key in keys_list:
             save_wallet_to("NFT_not_have", private_key)
             continue
         
-        networks = config.network4bridge
+        networks = config.network4bridge.copy()
         if network in networks:
             networks.remove(network)
         to_network=random.choice(networks)
