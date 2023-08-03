@@ -50,7 +50,7 @@ for private_key in keys_list:
         networks = config.network4mint
         random.shuffle(networks)
         for network in networks:
-            if fun.get_token_balance_USD(wallet, network, fun.address[network]['native']) >= 0.1*config.count_nfts:
+            if fun.get_token_balance_USD(wallet, network, fun.address[network]['native']) >= config.min_balance_4_main:
                 flag_no_money = 0
                 break
         
