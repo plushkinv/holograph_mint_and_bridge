@@ -62,6 +62,7 @@ for private_key in keys_list:
             continue
 
         log(f"выбрана сеть для минта {network}")
+        fee = config.protocol_fee[network] * (1 + random.randint(100000000,999999999)/10000000000)
         
         web3 = Web3(Web3.HTTPProvider(fun.address[network]['rpc'], request_kwargs=config.request_kwargs))
     
@@ -83,6 +84,7 @@ for private_key in keys_list:
         if fun.address[network]['type']:
             transaction = dapp_contract.functions.purchase(config.count_nfts).build_transaction({
                 'from': wallet,
+                'value': web3.to_wei(fee , "ether"),
                 'maxFeePerGas': maxFeePerGas,
                 'maxPriorityFeePerGas': maxPriorityFeePerGas,    
                 'nonce': nonce
@@ -90,6 +92,7 @@ for private_key in keys_list:
         else:
             transaction = dapp_contract.functions.purchase(config.count_nfts).build_transaction({
                 'from': wallet,
+                'value': web3.to_wei(fee , "ether"),
                 'gasPrice': gasPrice,
                 'nonce': nonce
             })
