@@ -1,18 +1,17 @@
 
 #то что ниже обязательно заполнить своими данными
-proxy_use = 1 #  0 - не использовать, 1 - прокси без ссылки , 2 - прокси со ссылкой для смены ip
-proxy_login = 'pfdsfsdfff5456464'
-proxy_password = '9c3dsadssssaa07'
-proxy_address = 'node-de-65.astroproxy.com'
-proxy_port = '10257'
-proxy_changeIPlink = "http://node-de-65.astroproxy.com:10257/api/changeIP?apiToken=b17a9fe5cce3b204"
+proxy_use = 0 #  0 - не использовать, 1 - прокси без ссылки , 2 - прокси со ссылкой для смены ip
+proxy_login = 'pf64'
+proxy_password = '9ca07'
+proxy_address = 'nm'
+proxy_port = '7'
+proxy_changeIPlink = "httce3b204"
 
 
 #то что ниже желательно настроить под себя
 NFT_adress = "0x3b2d8bb062d121619acff4e01ece2690789e919f"
 min_balance_4_main = 2 # Указывается в $,  минимальный баланс который должен быть на кошельке чтобы начать минтить и брижить. работает только для main.py 
-# network4mint = ['avax', 'polygon', 'bsc', 'arbitrum', 'optimism']  # выберите сети, в одной из них будет случайно сминчена НФТ
-network4mint = ['bsc', 'optimism']  # выберите сети, в одной из них будет случайно сминчена НФТ
+network4mint = ['avax', 'polygon', 'bsc', 'arbitrum', 'optimism']  # выберите сети, в одной из них будет случайно сминчена НФТ
 network4bridge = ['avax', 'polygon', 'bsc', 'arbitrum', 'optimism']  # выберите сети, в одну из них будет будет отправлена НФТ через мост
 
 
