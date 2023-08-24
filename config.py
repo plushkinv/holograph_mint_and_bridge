@@ -1,16 +1,17 @@
 
 #то что ниже обязательно заполнить своими данными
 proxy_use = 0 #  0 - не использовать, 1 - прокси без ссылки , 2 - прокси со ссылкой для смены ip
-proxy_login = 'pf64'
-proxy_password = '9ca07'
-proxy_address = 'nm'
-proxy_port = '7'
-proxy_changeIPlink = "httce3b204"
+proxy_login = 'pfd464'
+proxy_password = '9c07'
+proxy_address = 'nocom'
+proxy_port = '157'
+proxy_changeIPlink = "httpcce3b204"
 
 
 #то что ниже желательно настроить под себя
-NFT_adress = "0x3b2d8bb062d121619acff4e01ece2690789e919f"
-min_balance_4_main = 2 # Указывается в $,  минимальный баланс который должен быть на кошельке чтобы начать минтить и брижить. работает только для main.py 
+NFT_adress = "0x8b5cc5e37c7fa12305669c3a7fc520663932b55d"
+count_nfts = 1  # количество сколько хотите сминтить 
+min_balance_4_main = 3 # Указывается в $,  минимальный баланс который должен быть на кошельке чтобы начать минтить и брижить. работает только для main.py 
 network4mint = ['avax', 'polygon', 'bsc', 'arbitrum', 'optimism']  # выберите сети, в одной из них будет случайно сминчена НФТ
 network4bridge = ['avax', 'polygon', 'bsc', 'arbitrum', 'optimism']  # выберите сети, в одну из них будет будет отправлена НФТ через мост
 
@@ -49,12 +50,4 @@ prices = {
     "ETH": 1900,
 }
 
-protocol_fee = {
-'avax': 0.0081,
-'polygon': 0.15,
-'bsc': 0.00044,
-'arbitrum': 0.000057,
-'optimism': 0.000057
-}
 
-count_nfts = 1  # количество сколько хотите сминтить  !!!Не менять!

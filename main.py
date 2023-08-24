@@ -61,14 +61,13 @@ for private_key in keys_list:
             continue
 
         log(f"выбрана сеть для минта {network}")
-        fee = config.protocol_fee[network] * (1 + random.randint(100000000,999999999)/10000000000)
         
         web3 = Web3(Web3.HTTPProvider(fun.address[network]['rpc'], request_kwargs=config.request_kwargs))
        
         dapp_abi = json.load(open('abi/nft_abi.json'))
         dapp_address = web3.to_checksum_address(config.NFT_adress)
         dapp_contract = web3.eth.contract(address=dapp_address, abi=dapp_abi)
-
+        fee = int(dapp_contract.functions.getHolographFeeWei(config.count_nfts).call()*1.03)
 
 
         if fun.address[network]['type']:
@@ -83,7 +82,7 @@ for private_key in keys_list:
         if fun.address[network]['type']:
             transaction = dapp_contract.functions.purchase(config.count_nfts).build_transaction({
                 'from': wallet,
-                'value': web3.to_wei(fee , "ether"),
+                'value': fee,
                 'maxFeePerGas': maxFeePerGas,
                 'maxPriorityFeePerGas': maxPriorityFeePerGas,    
                 'nonce': nonce
@@ -91,7 +90,7 @@ for private_key in keys_list:
         else:
             transaction = dapp_contract.functions.purchase(config.count_nfts).build_transaction({
                 'from': wallet,
-                'value': web3.to_wei(fee , "ether"),
+                'value': fee,
                 'gasPrice': gasPrice,
                 'nonce': nonce
             })
@@ -159,7 +158,8 @@ for private_key in keys_list:
     
 
         lzFee = lzEndpoint_contract.functions.estimateFees(fun.address[to_network]['dstChainId'],HolographBridgeAddress,'0x',False,'0x').call()[0]
-        lzFee = int(lzFee * 2.5)    
+        lzFee = int(lzFee * 2.5) 
+        print(web3.from_wei(lzFee , "ether"))   
 
         balance = 0
         balance = web3.eth.get_balance(wallet)

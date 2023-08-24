@@ -36,7 +36,7 @@ address = {
         'holograph_gas': 131250001,
     },
     'optimism': {
-        'type': 0,
+        'type': 2,
         'rpc': config.rpc_links['optimism'],
         'USDC': '0x7f5c764cbc14f9669b88837ca1490cca17c31607',
         'ETH': 'native',
