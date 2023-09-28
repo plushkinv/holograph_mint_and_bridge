@@ -27,7 +27,7 @@ random.shuffle(keys_list)
 i=0
 for private_key in keys_list:
     i += 1
-    if random.randint(0, 100) < config.veroyatnost_minta:
+    if random.randint(0, 100) > config.veroyatnost_minta:
         log("skip")
         continue
         
