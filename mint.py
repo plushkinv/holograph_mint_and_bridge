@@ -27,6 +27,10 @@ random.shuffle(keys_list)
 i=0
 for private_key in keys_list:
     i += 1
+    if random.randint(0, 100) < config.veroyatnost_minta:
+        log("skip")
+        continue
+        
     if config.proxy_use == 2:
         while True:
             try:
@@ -40,6 +44,7 @@ for private_key in keys_list:
                 time.sleep(120)
 
     try:
+        fun.get_new_prices()
 
         web3 = Web3(Web3.HTTPProvider(fun.address['polygon']['rpc'], request_kwargs=config.request_kwargs))
         account = web3.eth.account.from_key(private_key)

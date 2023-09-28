@@ -4,6 +4,7 @@ from datetime import datetime
 import random
 from statistics import mean
 import time
+import requests
 from web3 import Web3
 import config
 
@@ -173,3 +174,45 @@ def timeOut(type="main"):
         log(f"пауза {int(time_sleep/60)} минут")
     time.sleep(time_sleep)
 
+def get_new_prices(token = False):
+
+
+    if token:
+        try:
+            url =f'https://min-api.cryptocompare.com/data/price?fsym={token}&tsyms=USDT'
+            result = requests.get(url=url, proxies=config.proxies)
+            if result.status == 200:
+                resp_json = result.json(content_type=None)
+                new_price = float(resp_json['USDT'])
+                config.prices[token] = new_price
+                log(f"Обновил цену для {token}= {new_price}")
+        except Exception as error:
+            log_error(f'Не смог узнать цену для {token}: {error}')
+
+    else:
+            
+        if config.prices["last_update"] > int(time.time()-3600):
+            return False
+        config.prices["last_update"] = int(time.time())
+
+        for token, price in config.prices.items():    
+            if token == "last_update":
+                continue
+
+            try:
+                url =f'https://min-api.cryptocompare.com/data/price?fsym={token}&tsyms=USDT'
+                if config.proxy_use:
+                    result = requests.get(url=url, proxies=config.proxies)
+                else:
+                    result = requests.get(url=url)                    
+                if result.status_code == 200:
+                    resp_json = result.json()
+                    new_price = float(resp_json['USDT'])
+                    config.prices[token] = new_price
+                    log(f"Обновил цену для {token}= {new_price}")
+            except Exception as error:
+                log_error(f'Не смог узнать цену для {token}: {error}')
+
+            time.sleep(1)
+
+    return True

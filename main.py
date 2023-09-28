@@ -28,6 +28,10 @@ random.shuffle(keys_list)
 i=0
 for private_key in keys_list:
     i += 1
+    if random.randint(0, 100) < config.veroyatnost_minta:
+        log("skip")
+        continue
+
     if config.proxy_use == 2:
         while True:
             try:
@@ -40,6 +44,8 @@ for private_key in keys_list:
                 print(' !!! Не смог подключиться через Proxy, повторяем через 2 минуты... ! Чтобы остановить программу нажмите CTRL+C или закройте терминал')
                 time.sleep(120)
     try:
+        fun.get_new_prices()
+
         web3 = Web3(Web3.HTTPProvider(fun.address['polygon']['rpc'], request_kwargs=config.request_kwargs))
         account = web3.eth.account.from_key(private_key)
         wallet = account.address
@@ -119,6 +125,11 @@ for private_key in keys_list:
     fun.timeOut("teh")
 
 ###########
+
+    if random.randint(0, 100) < config.veroyatnost_bridge:
+        log("skip")
+        continue
+
     try:
         HolographBridgeAddress = Web3.to_checksum_address('0xD85b5E176A30EdD1915D6728FaeBD25669b60d8b')
         LzEndAddress = Web3.to_checksum_address('0x3c2269811836af69497E5F486A85D7316753cf62')
